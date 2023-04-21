@@ -1,7 +1,7 @@
-package com.widus.springbootauth.web.util;
+package com.widus.springbootauth.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.widus.springbootauth.web.response.ResponseDto;
+import com.widus.springbootauth.web.ResponseDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Created by Widus on 2023. 3. 23..
+ * Created by Sshs0702 on 2023. 3. 23..
  *
  * 인증 시 사용할 Response Util
  *

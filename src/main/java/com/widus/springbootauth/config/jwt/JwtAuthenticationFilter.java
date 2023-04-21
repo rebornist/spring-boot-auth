@@ -2,8 +2,9 @@ package com.widus.springbootauth.config.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.widus.springbootauth.user.UserDetail;
-import com.widus.springbootauth.web.request.UserReqDto;
-import com.widus.springbootauth.web.util.CustomResponseUtil;
+import com.widus.springbootauth.user.UserReqDto;
+import com.widus.springbootauth.user.UserRespDto;
+import com.widus.springbootauth.util.CustomResponseUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
@@ -17,6 +18,13 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+
+
+/**
+ * Created by Sshs0702 on 2023. 3. 23.
+ *
+ * JWT 인증 필터
+ */
 
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
@@ -59,7 +67,11 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
                                 Authentication authResult) throws IOException, ServletException {
         UserDetail loginUser = (UserDetail) authResult.getPrincipal();
-        String jwtToken =
+        String jwtToken = JwtProcess.createToken(loginUser);
+        response.addHeader(JwtVo.HEADER, jwtToken);
+
+        UserRespDto.SigninRespDto loginRespDto = new UserRespDto.SigninRespDto(loginUser.getUser());
+        CustomResponseUtil.success(response, loginRespDto);
     };
 
     // 인증 실패시 처리 로직

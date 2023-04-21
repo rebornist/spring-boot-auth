@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * Created by Widus on 2023. 3. 23..
+ * Created by Sshs0702 on 2023. 3. 23.
  *
  * 유저 상세 정보
  *

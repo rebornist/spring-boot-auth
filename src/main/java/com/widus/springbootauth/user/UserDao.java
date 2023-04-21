@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 
 
 /**
- * Created by Widus on 2023. 3. 23..
+ * Created by Sshs0702 on 2023. 3. 23.
  *
  * User Entity
  *

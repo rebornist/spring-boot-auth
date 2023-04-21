@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * Created by Widus on 2023. 3. 23..
+ * Created by Sshs0702 on 2023. 3. 23.
  *
  * User 권한 종류
  *

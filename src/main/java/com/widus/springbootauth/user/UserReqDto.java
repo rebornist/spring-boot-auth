@@ -1,4 +1,4 @@
-package com.widus.springbootauth.web.request;
+package com.widus.springbootauth.user;
 
 import com.widus.springbootauth.user.UserDao;
 import com.widus.springbootauth.user.UserEnum;
@@ -11,7 +11,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 /**
- * Created by Widus on 2023. 3. 23..
+ * Created by Sshs0702 on 2023. 3. 23.
  *
  * 유저 인증 요청 DTO
  *
@@ -64,4 +64,22 @@ public class UserReqDto {
                     .build();
         }
     }
+
+    // 로그인 요청 DTO
+    @Getter
+    @Setter
+    public static class SigninReqDto {
+
+        // 유저명 유효성 검사 추가
+        @Pattern(regexp = "^[a-zA-Z0-9]+@[a-zA-Z0-9]+\\.[a-zA-Z0-9]+$", message = "이메일 형식이 올바르지 않습니다.")
+        @NotEmpty
+        private String username;
+
+        // 비밀번호 유효성 검사 추가
+        @NotEmpty
+        @Size(min = 8, max = 20, message = "비밀번호는 8~20자 이내로 입력해주세요.")
+        private String password;
+
+    }
+
 }

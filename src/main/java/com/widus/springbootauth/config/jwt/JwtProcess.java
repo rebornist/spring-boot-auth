@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Date;
 
 /**
- * Created by Widus on 2023. 3. 23..
+ * Created by Widus on 2023. 3. 23.
  *
  * JWT 인증 프로세스
  *

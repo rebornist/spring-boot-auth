@@ -1,10 +1,14 @@
 package com.widus.springbootauth.config;
 
+import com.widus.springbootauth.config.jwt.JwtAuthenticationFilter;
+import com.widus.springbootauth.config.jwt.JwtAuthorizationFilter;
 import com.widus.springbootauth.user.UserEnum;
+import com.widus.springbootauth.util.CustomResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -15,7 +19,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 /**
- * Created by Widus on 2023. 3. 23..
+ * Created by Widus on 2023. 3. 23.
  *
  * Security 설정
  * JWT 인증을 위한 설정
@@ -71,8 +75,14 @@ public class SecurityConfig {
         http.apply(new CustomSerurityFilterManager());
 
         // 인증 실패 시 401 에러를 리턴
+        http.exceptionHandling().authenticationEntryPoint((request, response, authException) -> {
+            CustomResponseUtil.fail(response, "인증이 필요합니다.", HttpStatus.UNAUTHORIZED);
+        });
 
         // 권한 확인 실패 시 403 에러를 리턴
+        http.exceptionHandling().accessDeniedHandler((request, response, accessDeniedException) -> {
+            CustomResponseUtil.fail(response, "권한이 없습니다.", HttpStatus.FORBIDDEN);
+        });
 
         // Request 요청 시 권한에 따른 접근 권한 부여
         http.authorizeRequests()

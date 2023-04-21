@@ -1,10 +1,10 @@
-package com.widus.springbootauth.web.response;
+package com.widus.springbootauth.web;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 /**
- * Created by Widus on 2023. 3. 23..
+ * Created by Sshs0702 on 2023. 3. 23.
  *
  * 공통 응답 Dto
  *
