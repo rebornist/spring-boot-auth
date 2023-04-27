@@ -1,4 +1,4 @@
-package com.widus.springbootauth.user;
+package com.widus.springbootauth.auth;
 
 import com.widus.springbootauth.user.UserDao;
 import com.widus.springbootauth.util.CustomDateUtil;
@@ -12,7 +12,7 @@ import lombok.ToString;
  * 유저 응답 Dto
  *
  */
-public class UserRespDto {
+public class AuthRespDto {
     @Setter
     @Getter
     public static class SigninRespDto {

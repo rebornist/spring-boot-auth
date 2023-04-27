@@ -1,4 +1,4 @@
-package com.widus.springbootauth.user;
+package com.widus.springbootauth.auth;
 
 import com.widus.springbootauth.user.UserDao;
 import com.widus.springbootauth.user.UserEnum;
@@ -16,17 +16,7 @@ import javax.validation.constraints.Size;
  * 유저 인증 요청 DTO
  *
  */
-public class UserReqDto {
-
-    // Login Request DTO
-    @Getter
-    @Setter
-    public static class LoginReqDto {
-        @NotEmpty
-        private String username;
-        @NotEmpty
-        private String password;
-    }
+public class AuthReqDto {
 
     // Signup Request DTO
     @Getter
@@ -59,7 +49,6 @@ public class UserReqDto {
                     .username(username)
                     .password(passwordEncoder.encode(password))
                     .email(email)
-                    .fullname(fullname)
                     .role(UserEnum.VISITOR)
                     .build();
         }
@@ -71,13 +60,13 @@ public class UserReqDto {
     public static class SigninReqDto {
 
         // 유저명 유효성 검사 추가
-        @Pattern(regexp = "^[a-zA-Z0-9]+@[a-zA-Z0-9]+\\.[a-zA-Z0-9]+$", message = "이메일 형식이 올바르지 않습니다.")
+        // @Pattern(regexp = "^[a-zA-Z0-9]+@[a-zA-Z0-9]+\\.[a-zA-Z0-9]+$", message = "이메일 형식이 올바르지 않습니다.")
         @NotEmpty
         private String username;
 
         // 비밀번호 유효성 검사 추가
         @NotEmpty
-        @Size(min = 8, max = 20, message = "비밀번호는 8~20자 이내로 입력해주세요.")
+        // @Size(min = 8, max = 20, message = "비밀번호는 8~20자 이내로 입력해주세요.")
         private String password;
 
     }

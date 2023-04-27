@@ -12,6 +12,11 @@ import org.springframework.validation.FieldError;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Created by Sshs0702 on 2021. 4. 27.
+ *
+ * 유효성 검사 AOP
+ */
 @Component
 @Aspect
 public class CustomValidationAdvice {

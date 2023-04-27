@@ -1,5 +1,7 @@
-package com.widus.springbootauth.config.jwt;
+package com.widus.springbootauth.filter;
 
+import com.widus.springbootauth.jwt.JwtService;
+import com.widus.springbootauth.jwt.JwtVo;
 import com.widus.springbootauth.user.UserDetail;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,9 +32,10 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws IOException, ServletException {
         if (isHeaderVerify(request, response)) {
+
             // 토큰이 존재함
             String token = request.getHeader(JwtVo.HEADER).replace(JwtVo.TOKEN_PREFIX, "");
-            UserDetail user = JwtProcess.verifyToken(token);
+            UserDetail user = JwtService.verifyAccessToken(token, request.getRemoteAddr());
 
             // 임시 세션 생성(UserDetails or username)
             Authentication authentication = new UsernamePasswordAuthenticationToken(user, null,

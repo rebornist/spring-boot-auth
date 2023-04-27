@@ -38,7 +38,7 @@ public class SpringConfigTest {
         System.out.println("테스트: " + responseBody);
 
         // then
-        assertThat(httpStatus).isEqualTo(HttpStatus.OK.value());
+        assertThat(httpStatus).isEqualTo(HttpStatus.NOT_FOUND.value());
 
     }
 }

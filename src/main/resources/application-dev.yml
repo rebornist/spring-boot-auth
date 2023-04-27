@@ -1,5 +1,5 @@
 server:
-  port: 8081
+  port: 18080
   servlet:
     encoding:
       charset: UTF-8
@@ -7,28 +7,24 @@ server:
 
 spring:
   datasource:
-    url: jdbc:h2:mem:test;MODE=PostgreSQL
-    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:test
     username: sa
     password:
-    hikari:
-      schema: public
-    h2:
-      console:
-        enabled: true
-    jpa:
-      open-in-view: false
-      hibernate:
-        ddl-auto: create
-        properties:
-          '[hibernate.default_batch_fetch_size]': 100
-          '[hibernate.format_sql]': true
-        show-sql: true
-    output:
-      ansi:
-        enabled: always
+    driver-class-name: org.h2.Driver
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: create
+      dialect: org.hibernate.dialect.H2Dialect
+      show-sql: true
+  h2:
+    console:
+      enabled: true
+  redis:
+    host: localhost
+    port: 6379
 
 logging:
   level:
-    '[com.widus.springbootauth]': DEBUG
-    '[org.springframework]': TRACE
+    '[org.springframework]': DEBUG
+#    '[org.springframework]': TRACE

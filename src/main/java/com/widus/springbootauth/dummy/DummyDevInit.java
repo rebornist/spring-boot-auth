@@ -13,6 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
  * Created by Sshs0702 on 2021. 4. 21.
  *
  * Dummy Configuration
+ * dev 환경에서만 실행되는 더미 데이터 생성
  */
 @Configuration
 public class DummyDevInit {
@@ -25,9 +26,10 @@ public class DummyDevInit {
 
         return args -> {
             UserDao user = userRepository.save(UserDao.builder()
-                    .username("user")
+                    .id(1L)
+                    .username("sshs0702")
                     .password(encPassword)
-                    .email("user@gmail.com")
+                    .email("sshs0702@gmail.com")
                     .role(UserEnum.VISITOR)
                     .build());
         };

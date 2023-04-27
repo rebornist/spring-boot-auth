@@ -8,6 +8,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+/**
+ * Created by Sshs0702 on 2021. 4. 21.
+ *
+ * 기본 Exception Handler
+ */
+
 @RestControllerAdvice
 public class CustomExceptionHandler {
 

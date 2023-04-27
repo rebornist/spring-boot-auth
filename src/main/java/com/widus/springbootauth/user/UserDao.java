@@ -7,7 +7,16 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
 import java.time.LocalDateTime;
 
 
@@ -41,14 +50,14 @@ public class UserDao {
     @Column(length = 100, nullable = false, unique = true)
     private String email;
 
-    // 성명
-    @Column(length = 45, nullable = false)
-    private String fullname;
-
     // 권한
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserEnum role;
+
+    // 토큰
+    @Column(length = 1000)
+    private String token;
 
     // 등록일자
     @CreatedDate
@@ -62,13 +71,16 @@ public class UserDao {
 
     // 생성자
     @Builder
-    public UserDao(Long id, String username, String password, String email, String fullname,
-                   UserEnum role, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public UserDao(Long id, String username, String password, String email,
+                   UserEnum role, String token, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.id = id;
         this.username = username;
         this.password = password;
         this.email = email;
-        this.fullname = fullname;
         this.role = role;
+        this.token = token;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
 }

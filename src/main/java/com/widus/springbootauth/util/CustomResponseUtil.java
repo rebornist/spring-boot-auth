@@ -1,15 +1,18 @@
 package com.widus.springbootauth.util;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.widus.springbootauth.web.ResponseDto;
+import javax.servlet.http.HttpServletResponse;
+
+import com.widus.springbootauth.ex.CustomApiException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 
-import javax.servlet.http.HttpServletResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import com.widus.springbootauth.web.ResponseDto;
 
 /**
- * Created by Sshs0702 on 2023. 3. 23..
+ * Created by Sshs0702 on 2023. 3. 23.
  *
  * 인증 시 사용할 Response Util
  *
@@ -30,7 +33,7 @@ public class CustomResponseUtil {
             response.setStatus(HttpServletResponse.SC_OK);
             response.getWriter().println(responseBody);
         } catch (Exception e) {
-            log.error("CustomResponseUtil.success() Exception: {}", e.getMessage());
+            throw new CustomApiException(e.getMessage());
         }
     }
 
@@ -46,7 +49,7 @@ public class CustomResponseUtil {
             response.setStatus(httpStatus.value());
             response.getWriter().println(responseBody);
         } catch (Exception e) {
-            log.error("CustomResponseUtil.fail() Exception: {}", e.getMessage());
+            throw new CustomApiException(e.getMessage());
         }
     }
 }

@@ -1,9 +1,12 @@
-package com.widus.springbootauth.config.jwt;
+package com.widus.springbootauth.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.widus.springbootauth.jwt.JwtDto;
+import com.widus.springbootauth.jwt.JwtService;
+import com.widus.springbootauth.jwt.JwtVo;
 import com.widus.springbootauth.user.UserDetail;
-import com.widus.springbootauth.user.UserReqDto;
-import com.widus.springbootauth.user.UserRespDto;
+import com.widus.springbootauth.auth.AuthReqDto;
+import com.widus.springbootauth.auth.AuthRespDto;
 import com.widus.springbootauth.util.CustomResponseUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,12 +23,12 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 
+
 /**
  * Created by Sshs0702 on 2023. 3. 23.
  *
  * JWT 인증 필터
  */
-
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     // 인증 관리자 등록
@@ -33,6 +36,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     
     // JWT 인증 필더 생성
     public JwtAuthenticationFilter(AuthenticationManager authenticationManager) {
+        super(authenticationManager);
+        setFilterProcessesUrl("/api/user/signin"); // 시큐리티 기본 URL 대신에 /api/user/signin URL로 인증 시도
         this.authenticationManager = authenticationManager;
     }
 
@@ -44,7 +49,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
             // username, password 파라미터를 받아서 인증 시도
             ObjectMapper mapper = new ObjectMapper();
-            UserReqDto.LoginReqDto user = mapper.readValue(request.getInputStream(), UserReqDto.LoginReqDto.class);
+            AuthReqDto.SigninReqDto user = mapper.readValue(request.getInputStream(), AuthReqDto.SigninReqDto.class);
 
             // 인증 관리자에게 인증 시도
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
@@ -67,10 +72,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
                                 Authentication authResult) throws IOException, ServletException {
         UserDetail loginUser = (UserDetail) authResult.getPrincipal();
-        String jwtToken = JwtProcess.createToken(loginUser);
-        response.addHeader(JwtVo.HEADER, jwtToken);
+        JwtDto jwtDto = JwtService.createAccessToken(loginUser, request.getRemoteAddr());
+        response.addHeader(JwtVo.HEADER, jwtDto.getToken());
 
-        UserRespDto.SigninRespDto loginRespDto = new UserRespDto.SigninRespDto(loginUser.getUser());
+        AuthRespDto.SigninRespDto loginRespDto = new AuthRespDto.SigninRespDto(loginUser.getUser());
         CustomResponseUtil.success(response, loginRespDto);
     };
 
@@ -80,7 +85,5 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                               AuthenticationException failed) throws IOException, ServletException {
         CustomResponseUtil.fail(response, "인증 실패", HttpStatus.UNAUTHORIZED);
     };
-
-
 
 }
