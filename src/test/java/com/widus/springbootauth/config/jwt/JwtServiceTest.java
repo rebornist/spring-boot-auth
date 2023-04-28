@@ -3,6 +3,7 @@ package com.widus.springbootauth.config.jwt;
 import com.widus.springbootauth.jwt.*;
 import com.widus.springbootauth.user.UserDao;
 import com.widus.springbootauth.user.UserDetail;
+import com.widus.springbootauth.user.UserDto;
 import com.widus.springbootauth.user.UserEnum;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,9 @@ public class JwtServiceTest {
     @Autowired
     private JwtRepository jwtRepository;
 
+    @Autowired
+    private JwtService jwtService;
+
     @Test
     public void createToken_test() throws Exception {
         // given
@@ -30,7 +34,7 @@ public class JwtServiceTest {
         String ip = "192.168.1.1";
 
         // when
-        JwtDto jwtDto = JwtService.createAccessToken(loginUser, ip);
+        JwtDto jwtDto = jwtService.CreateAccessToken(loginUser, ip);
 
         // then
         assertTrue(jwtDto.getToken().startsWith(JwtVo.TOKEN_PREFIX));
@@ -45,16 +49,17 @@ public class JwtServiceTest {
                 .build();
         UserDetail loginUser = new UserDetail(user);
         String ip = "192.168.1.1";
-        JwtDto jwtDto = JwtService.createAccessToken(loginUser, ip);
+        JwtDto jwtDto = jwtService.CreateAccessToken(loginUser, ip);
 
         String reqIp = "192.168.1.1";
 
         // when
-        UserDetail verifyUser = JwtService.verifyAccessToken(jwtDto.getToken(), reqIp);
+        UserDto verifyUser = jwtService.VerifyAccessToken(jwtDto.getToken(), reqIp);
+        UserDetail newUser = new UserDetail(verifyUser.toEntity(verifyUser));
 
         // then
-        assertTrue(verifyUser.getUser().getId().equals(loginUser.getUser().getId()));
-        assertTrue(verifyUser.getUser().getRole().equals(loginUser.getUser().getRole()));
+        assertTrue(newUser.getUser().getId().equals(loginUser.getUser().getId()));
+        assertTrue(newUser.getUser().getRole().equals(loginUser.getUser().getRole()));
     }
 
     @Test
@@ -70,7 +75,7 @@ public class JwtServiceTest {
         String ip = "192.168.1.1";
 
         // when
-        JwtDto jwtDto = JwtService.createRefreshToken(loginUser, ip);
+        JwtDto jwtDto = jwtService.CreateRefreshToken(loginUser, ip);
         jwtRepository.save(jwtDto.toEntity(jwtDto));
 
         JwtDao newDao = jwtRepository.findById(loginUser.getUser().getId())

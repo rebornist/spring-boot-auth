@@ -55,10 +55,6 @@ public class UserDao {
     @Column(nullable = false)
     private UserEnum role;
 
-    // 토큰
-    @Column(length = 1000)
-    private String token;
-
     // 등록일자
     @CreatedDate
     @Column(nullable = false)
@@ -72,13 +68,12 @@ public class UserDao {
     // 생성자
     @Builder
     public UserDao(Long id, String username, String password, String email,
-                   UserEnum role, String token, LocalDateTime createdAt, LocalDateTime updatedAt) {
+                   UserEnum role, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.email = email;
         this.role = role;
-        this.token = token;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }

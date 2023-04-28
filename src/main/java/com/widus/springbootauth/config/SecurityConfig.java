@@ -3,10 +3,14 @@ package com.widus.springbootauth.config;
 import com.widus.springbootauth.filter.JwtAuthenticationFilter;
 import com.widus.springbootauth.filter.JwtAuthorizationFilter;
 
+import com.widus.springbootauth.jwt.JwtRepository;
+import com.widus.springbootauth.jwt.JwtService;
 import com.widus.springbootauth.user.UserEnum;
 import com.widus.springbootauth.util.CustomResponseUtil;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -28,13 +32,16 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
  *
  */
 @Configuration
+@RequiredArgsConstructor
 public class SecurityConfig {
 
     /**
      * JWT 인증을 위한 설정
      */
 
-    private  final Logger log = LoggerFactory.getLogger(this.getClass());
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private final JwtRepository jwtRepository;
+    private final JwtService jwtService;
 
     /**
      * Bcrypt 암호화를 위한 설정
@@ -52,8 +59,8 @@ public class SecurityConfig {
         @Override
         public void configure(HttpSecurity http) throws Exception {
             AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
-            http.addFilter(new JwtAuthenticationFilter(authenticationManager));
-            http.addFilter(new JwtAuthorizationFilter(authenticationManager));
+            http.addFilter(new JwtAuthenticationFilter(authenticationManager, jwtService, jwtRepository));
+            http.addFilter(new JwtAuthorizationFilter(authenticationManager, jwtService, jwtRepository));
             super.configure(http);
             log.debug("디버그 : CustomSecurityFilterManager 빈 등록됨");
         }

@@ -2,12 +2,14 @@ package com.widus.springbootauth.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.widus.springbootauth.jwt.JwtDto;
+import com.widus.springbootauth.jwt.JwtRepository;
 import com.widus.springbootauth.jwt.JwtService;
 import com.widus.springbootauth.jwt.JwtVo;
 import com.widus.springbootauth.user.UserDetail;
 import com.widus.springbootauth.auth.AuthReqDto;
 import com.widus.springbootauth.auth.AuthRespDto;
 import com.widus.springbootauth.util.CustomResponseUtil;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
@@ -28,16 +30,21 @@ import java.io.IOException;
  *
  * JWT 인증 필터
  */
+@RequiredArgsConstructor
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     // 인증 관리자 등록
     private AuthenticationManager authenticationManager;
+    private JwtRepository jwtRepository;
+    private JwtService jwtService;
 
     // JWT 인증 필더 생성
-    public JwtAuthenticationFilter(AuthenticationManager authenticationManager) {
+    public JwtAuthenticationFilter(AuthenticationManager authenticationManager, JwtService jwtService, JwtRepository jwtRepository) {
         super(authenticationManager);
-        setFilterProcessesUrl("/api/user/signin"); // 시큐리티 기본 URL 대신에 /api/user/signin URL로 인증 시도
+        setFilterProcessesUrl("/api/auth/signin"); // 시큐리티 기본 URL 대신에 /api/user/signin URL로 인증 시도
         this.authenticationManager = authenticationManager;
+        this.jwtRepository = jwtRepository;
+        this.jwtService = jwtService;
     }
 
     // 인증 시도
@@ -75,11 +82,16 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         UserDetail loginUser = (UserDetail) authResult.getPrincipal();
 
         // JWT Access 토큰 생성 후 헤더에 넣어주기
-        JwtDto accessJwtDto = JwtService.createAccessToken(loginUser, request.getRemoteAddr());
+        JwtDto accessJwtDto = jwtService.CreateAccessToken(loginUser, request.getRemoteAddr());
         response.addHeader(JwtVo.HEADER, accessJwtDto.getToken());
 
-        AuthRespDto.SigninRespDto loginRespDto = new AuthRespDto.SigninRespDto(loginUser.getUser());
-        CustomResponseUtil.success(response, loginRespDto);
+        // JWT Refresh 토큰 생성 후 DB에 저장
+        JwtDto refreshJwtDto = jwtService.CreateRefreshToken(loginUser, request.getRemoteAddr());
+        jwtRepository.save(refreshJwtDto.toEntity(refreshJwtDto));
+
+        // AuthRespDto.SigninRespDto loginRespDto = new AuthRespDto.SigninRespDto(loginUser.getUser());
+
+        CustomResponseUtil.success(response, accessJwtDto, "인증 성공", HttpStatus.OK);
     };
 
     // 인증 실패시 처리 로직

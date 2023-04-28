@@ -1,8 +1,10 @@
 package com.widus.springbootauth.filter;
 
+import com.widus.springbootauth.jwt.JwtRepository;
 import com.widus.springbootauth.jwt.JwtService;
 import com.widus.springbootauth.jwt.JwtVo;
 import com.widus.springbootauth.user.UserDetail;
+import com.widus.springbootauth.user.UserDto;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -22,8 +24,13 @@ import java.io.IOException;
  */
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
-    public JwtAuthorizationFilter(AuthenticationManager authenticationManager) {
+    private JwtRepository jwtRepository;
+    private JwtService jwtService;
+
+    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, JwtService jwtService, JwtRepository jwtRepository) {
         super(authenticationManager);
+        this.jwtRepository = jwtRepository;
+        this.jwtService = jwtService;
     }
 
     // JWT 토큰 헤더를 추가하지 않더라도 해당 필터는 통과할 수 있지만, 결국 시큐리티에서 세션값 검증에 실패하게 됨
@@ -35,7 +42,14 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
             // 토큰이 존재함
             String token = request.getHeader(JwtVo.HEADER).replace(JwtVo.TOKEN_PREFIX, "");
-            UserDetail user = JwtService.verifyAccessToken(token, request.getRemoteAddr());
+            UserDto userDto = jwtService.VerifyAccessToken(token, request.getRemoteAddr());
+
+            // 기존 토큰과 다른 경우
+            if (!token.equals(userDto.getToken())) {
+                response.addHeader(JwtVo.HEADER, userDto.getToken());
+            }
+
+            UserDetail user = new UserDetail(userDto.toEntity(userDto));
 
             // 임시 세션 생성(UserDetails or username)
             Authentication authentication = new UsernamePasswordAuthenticationToken(user, null,

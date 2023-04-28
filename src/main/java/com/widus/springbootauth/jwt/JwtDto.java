@@ -18,7 +18,6 @@ import java.util.Date;
 @Setter
 @Builder
 public class JwtDto {
-    @Id
     private Long id;
     private String ip;
     private UserEnum role;

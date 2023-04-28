@@ -21,17 +21,18 @@ public class CustomResponseUtil {
 
     public static final Logger log = LoggerFactory.getLogger(CustomResponseUtil.class);
 
-    public static void success(HttpServletResponse response, Object dto) {
+    public static void success(HttpServletResponse response, Object dto, String message, HttpStatus httpStatus) {
         try {
             ObjectMapper mapper = new ObjectMapper();
 
-            ResponseDto<?> responseDto = new ResponseDto<>(HttpStatus.OK.value(), "로그인 성공!", dto);
+            ResponseDto<?> responseDto = new ResponseDto<>(httpStatus.value(), message, dto);
 
             String responseBody = mapper.writeValueAsString(responseDto);
 
             response.setContentType("application/json;charset=utf-8");
-            response.setStatus(HttpServletResponse.SC_OK);
+            response.setStatus(httpStatus.value());
             response.getWriter().println(responseBody);
+            log.info("msg: {}, responseBody: {}", message, responseBody);
         } catch (Exception e) {
             throw new CustomApiException(e.getMessage());
         }
@@ -41,13 +42,14 @@ public class CustomResponseUtil {
         try {
             ObjectMapper mapper = new ObjectMapper();
 
-            ResponseDto<?> responseDto = new ResponseDto<>(-1, message, null);
+            ResponseDto<?> responseDto = new ResponseDto<>(httpStatus.value(), message, null);
 
             String responseBody = mapper.writeValueAsString(responseDto);
 
             response.setContentType("application/json;charset=utf-8");
             response.setStatus(httpStatus.value());
             response.getWriter().println(responseBody);
+            log.error("msg: {}, responseBody: {}", message, responseBody);
         } catch (Exception e) {
             throw new CustomApiException(e.getMessage());
         }

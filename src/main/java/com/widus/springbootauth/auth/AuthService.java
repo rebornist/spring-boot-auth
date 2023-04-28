@@ -1,7 +1,9 @@
 package com.widus.springbootauth.auth;
 
 import com.widus.springbootauth.ex.CustomApiException;
+import com.widus.springbootauth.jwt.JwtService;
 import com.widus.springbootauth.user.UserDao;
+import com.widus.springbootauth.user.UserDetail;
 import com.widus.springbootauth.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -27,7 +29,7 @@ public class AuthService {
      * 회원가입
      */
     @Transactional
-    public AuthRespDto.SignupRespDto signup(AuthReqDto.SignupReqDto signupReqDto) {
+    public UserDetail signup(AuthReqDto.SignupReqDto signupReqDto) {
 
         // 이미 존재하는 유저인지 확인
         Optional<UserDao> userOP = userRepository.findByUsername(signupReqDto.getUsername());
@@ -35,10 +37,8 @@ public class AuthService {
         // 이미 존재하는 유저일 경우 예외 발생
         if (userOP.isPresent()) throw new CustomApiException("이미 존재하는 유저입니다.");
 
-        // 패스워드 인코딩
-        UserDao userPS = userRepository.save(signupReqDto.toEntity(passwordEncoder));
-
-        return new AuthRespDto.SignupRespDto(userPS);
+        // 패스워드 인코딩 후 저장
+        return new UserDetail(userRepository.save(signupReqDto.toEntity(passwordEncoder)));
     }
 
 }

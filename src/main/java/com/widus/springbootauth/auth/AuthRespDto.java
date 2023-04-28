@@ -12,32 +12,13 @@ import lombok.ToString;
  * 유저 응답 Dto
  *
  */
+@Getter
+@Setter
+@ToString
 public class AuthRespDto {
-    @Setter
-    @Getter
-    public static class SigninRespDto {
-        private Long id;
-        private String username;
-        private String createdAt;
+    private String token;
 
-        public SigninRespDto(UserDao user) {
-            this.id = user.getId();
-            this.username = user.getUsername();
-            this.createdAt = CustomDateUtil.toStringFormat(user.getCreatedAt());
-        }
-    }
-    @ToString
-    @Getter
-    @Setter
-    public static class SignupRespDto {
-        private Long id;
-        private String username;
-        private String createdAt;
-
-        public SignupRespDto(UserDao user) {
-            this.id = user.getId();
-            this.username = user.getUsername();
-            this.createdAt = CustomDateUtil.toStringFormat(user.getCreatedAt());
-        }
+    public AuthRespDto(String token) {
+        this.token = token;
     }
 }

@@ -31,6 +31,9 @@ public class JwtAuthorizationFilterTest {
     @Autowired
     private MockMvc mvc;
 
+    @Autowired
+    private JwtService jwtService;
+
     @Test
     public void successfulAuthorization_test() throws Exception {
 
@@ -43,11 +46,11 @@ public class JwtAuthorizationFilterTest {
 
         String ip = "192.168.1.1";
 
-        JwtDto jwtToken = JwtService.createAccessToken(loginUser, ip);
+        JwtDto jwtToken = jwtService.CreateAccessToken(loginUser, ip);
         System.out.println("테스트 : " + jwtToken);
 
         // when
-        ResultActions result = mvc.perform(get("/api/user")
+        ResultActions result = mvc.perform(get("/api/auth")
                 .header("Authorization", "Bearer " + jwtToken));
 
         // then
@@ -74,7 +77,7 @@ public class JwtAuthorizationFilterTest {
         UserDao user = UserDao.builder().id(1L).role(UserEnum.MANAGER).build();
         UserDetail loginUser = new UserDetail(user);
         String ip = "192.168.1.1";
-        JwtDto jwtDto = JwtService.createAccessToken(loginUser, ip);
+        JwtDto jwtDto = jwtService.CreateAccessToken(loginUser, ip);
         System.out.println("테스트 : " + jwtDto.getToken());
 
         // when
