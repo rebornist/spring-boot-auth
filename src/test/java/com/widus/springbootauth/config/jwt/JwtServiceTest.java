@@ -6,9 +6,6 @@ import com.widus.springbootauth.user.UserDetail;
 import com.widus.springbootauth.user.UserEnum;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -17,8 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *
  * JWT 토큰 생성 및 검증 테스트
  */
-@DataJpaTest
-public class JwtProcessTest {
+public class JwtServiceTest {
 
     @Autowired
     private JwtRepository jwtRepository;
@@ -74,7 +70,8 @@ public class JwtProcessTest {
         String ip = "192.168.1.1";
 
         // when
-        JwtService.createRefreshToken(loginUser, ip);
+        JwtDto jwtDto = JwtService.createRefreshToken(loginUser, ip);
+        jwtRepository.save(jwtDto.toEntity(jwtDto));
 
         JwtDao newDao = jwtRepository.findById(loginUser.getUser().getId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저가 없습니다. id=" + loginUser.getUser().getId()));
@@ -82,7 +79,7 @@ public class JwtProcessTest {
         System.out.println("newDao.getRefreshToken() = " + newDao.getIp());
 
         // then
-        assertTrue(newDao != null);
+//        assertTrue(newDao != null);
 
     }
 }

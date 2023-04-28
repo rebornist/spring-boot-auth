@@ -41,22 +41,4 @@ public class AuthService {
         return new AuthRespDto.SignupRespDto(userPS);
     }
 
-    /**
-     * 로그인
-      */
-    @Transactional
-    public AuthRespDto.SigninRespDto signin(AuthReqDto.SigninReqDto signinReqDto) {
-
-        // 존재하는 유저인지 확인
-        Optional<UserDao> userOP = userRepository.findByUsername(signinReqDto.getUsername());
-
-        // 존재하는 유저가 아닐 경우 예외 발생
-        if (!userOP.isPresent()) throw new CustomApiException("존재하는 유저가 아닙니다.");
-
-
-        // 패스워드 확인
-        if (!passwordEncoder.matches(signinReqDto.getPassword(), userOP.get().getPassword())) throw new CustomApiException("패스워드가 일치하지 않습니다.");
-
-        return new AuthRespDto.SigninRespDto(userOP.get());
-    }
 }

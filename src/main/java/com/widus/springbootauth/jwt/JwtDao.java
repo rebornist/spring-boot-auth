@@ -43,7 +43,7 @@ public class JwtDao {
 
     // 토큰 만료일자
     @Column(nullable = false)
-    private Date expiredAt;
+    private Date expiresAt;
 
     // 등록일자
     @CreatedDate
@@ -51,12 +51,12 @@ public class JwtDao {
     private LocalDateTime createdAt;
 
     @Builder
-    public JwtDao(Long id, String ip, UserEnum role, String token, Date expiredAt, LocalDateTime createdAt) {
+    public JwtDao(Long id, String ip, UserEnum role, String token, Date expiresAt, LocalDateTime createdAt) {
         this.id = id;
         this.ip = ip;
         this.role = role;
         this.token = token;
-        this.expiredAt = expiredAt;
+        this.expiresAt = expiresAt;
         this.createdAt = createdAt;
     }
 

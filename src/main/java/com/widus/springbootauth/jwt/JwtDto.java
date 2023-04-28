@@ -29,7 +29,7 @@ public class JwtDto {
                 .id(jwtDto.getId())
                 .ip(jwtDto.getIp())
                 .role(jwtDto.getRole())
-                .expiredAt(jwtDto.getExpiresAt())
+                .expiresAt(jwtDto.getExpiresAt())
                 .token(jwtDto.getToken())
                 .createdAt(LocalDateTime.now())
                 .build();

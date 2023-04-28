@@ -31,6 +31,7 @@ public class SecurityLoginService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UserDao user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new InternalAuthenticationServiceException("인증실패"));
+
         return new UserDetail(user);
     }
 

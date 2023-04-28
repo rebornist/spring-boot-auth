@@ -3,13 +3,11 @@ package com.widus.springbootauth.jwt;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.widus.springbootauth.ex.CustomApiException;
 import com.widus.springbootauth.user.UserDao;
 import com.widus.springbootauth.user.UserDetail;
 import com.widus.springbootauth.user.UserEnum;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.Optional;
@@ -22,6 +20,7 @@ import java.util.Optional;
  * JWT Refresh 토큰 생성, 검증
  * 추후 Redis를 사용하여 토큰을 관리할 수 있도록 개선할 예정
  */
+
 public class JwtService {
 
     @Autowired
@@ -43,7 +42,6 @@ public class JwtService {
                 .withClaim("ip", ip)
                 .withClaim("role", user.getUser().getRole().name())
                 .sign(Algorithm.HMAC512(JwtVo.SECRET.getBytes()));
-
 
         // TokenRespDto에 ACCESS 토큰 저장
         return JwtDto.builder()
@@ -69,7 +67,7 @@ public class JwtService {
         String ip = decodedJWT.getClaim("ip").asString();
         String role = decodedJWT.getClaim("role").asString();
 
-        // IP 검증
+        // 현재 IP와 토큰에 저장된 IP가 일치하는지 검증 후 일치하지 않을 경우 Null을 반환한다.
         if (!currentIp.equals(ip)) {
             return null;
         }
@@ -83,6 +81,7 @@ public class JwtService {
             if (!refreshToken.isPresent()) {
                 return null;
             }
+
             UserDetail user = verifyRefreshToken(refreshToken.get().getToken());
 
             if (user == null) {
@@ -108,7 +107,7 @@ public class JwtService {
     /**
      * JWT Refresh 토큰 생성
      */
-    public static void createRefreshToken(UserDetail user, String ip) {
+    public static JwtDto createRefreshToken(UserDetail user, String ip) {
 
         // 만료일자
         Date expriesAt = new Date(System.currentTimeMillis() + JwtVo.REFRESH_EXPIRATION_TIME);
@@ -120,21 +119,13 @@ public class JwtService {
                 .sign(Algorithm.HMAC512(JwtVo.SECRET.getBytes()));
 
         // TokenRespDto에 REFRESH 토큰 저장
-        JwtDto jwtDto = JwtDto.builder()
+        return JwtDto.builder()
                 .id(user.getUser().getId())
                 .expiresAt(expriesAt)
                 .role(user.getUser().getRole())
                 .ip(ip)
                 .token(JwtVo.TOKEN_PREFIX + refreshToken)
                 .build();
-        saveRefreshToken(jwtDto);
-    }
-
-    /**
-     * JWT Refresh 토큰 저장
-     */
-    public static void saveRefreshToken(JwtDto jwtDto) {
-        jwtRepository.save(jwtDto.toEntity(jwtDto));
     }
 
     /**
@@ -155,7 +146,8 @@ public class JwtService {
 
         // 만료일자가 지났을 경우
         if (expriesAt == null || expriesAt.before(new Date(System.currentTimeMillis()))) {
-            // Null을 반환하고
+            // 토큰 삭제 후 Null을 반환하고
+            jwtRepository.deleteById(id);
             return null;
         } else {
             // 만료되지 않았을 경우 UserDetail 객체를 반환한다.
@@ -165,5 +157,7 @@ public class JwtService {
                     .build());
         }
     }
+
+
 
 }

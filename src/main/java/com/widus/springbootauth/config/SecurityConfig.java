@@ -31,7 +31,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfig {
 
     /**
-     * TODO: JWT 인증을 위한 설정
+     * JWT 인증을 위한 설정
      */
 
     private  final Logger log = LoggerFactory.getLogger(this.getClass());

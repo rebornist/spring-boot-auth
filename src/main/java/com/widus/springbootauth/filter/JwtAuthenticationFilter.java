@@ -23,7 +23,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 
-
 /**
  * Created by Sshs0702 on 2023. 3. 23.
  *
@@ -33,7 +32,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     // 인증 관리자 등록
     private AuthenticationManager authenticationManager;
-    
+
     // JWT 인증 필더 생성
     public JwtAuthenticationFilter(AuthenticationManager authenticationManager) {
         super(authenticationManager);
@@ -71,9 +70,13 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
                                 Authentication authResult) throws IOException, ServletException {
+
+        // 유저 정보 가져오기
         UserDetail loginUser = (UserDetail) authResult.getPrincipal();
-        JwtDto jwtDto = JwtService.createAccessToken(loginUser, request.getRemoteAddr());
-        response.addHeader(JwtVo.HEADER, jwtDto.getToken());
+
+        // JWT Access 토큰 생성 후 헤더에 넣어주기
+        JwtDto accessJwtDto = JwtService.createAccessToken(loginUser, request.getRemoteAddr());
+        response.addHeader(JwtVo.HEADER, accessJwtDto.getToken());
 
         AuthRespDto.SigninRespDto loginRespDto = new AuthRespDto.SigninRespDto(loginUser.getUser());
         CustomResponseUtil.success(response, loginRespDto);
